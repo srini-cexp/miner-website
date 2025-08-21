@@ -1,0 +1,61 @@
+#cloud-config
+# Cloud-init configuration for deploying Miner Website on WordPress
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - nginx
+  - mysql-server
+  - php8.1-fpm
+  - php8.1-mysql
+  - php8.1-curl
+  - php8.1-gd
+  - php8.1-intl
+  - php8.1-mbstring
+  - php8.1-soap
+  - php8.1-xml
+  - php8.1-xmlrpc
+  - php8.1-zip
+  - wget
+  - unzip
+  - curl
+  - certbot
+  - python3-certbot-nginx
+  - git
+
+write_files:
+  - path: /opt/miner-website-deploy.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      # Download and extract the miner website
+      cd /opt
+      git clone https://github.com/your-repo/miner-website.git || wget -O miner-website.zip YOUR_WEBSITE_ZIP_URL
+      if [ -f miner-website.zip ]; then
+        unzip miner-website.zip
+        mv miner-website-main miner-website
+      fi
+      
+      # Set environment variables
+      export DOMAIN="${DOMAIN:-$(curl -s http://169.254.169.254/latest/meta-data/public-hostname)}"
+      export SITE_NAME="miner-website"
+      
+      # Run the main deployment script
+      bash /opt/miner-website/deploy/startup.sh
+
+  - path: /etc/environment
+    append: true
+    content: |
+      DOMAIN=your-domain.com
+      SITE_NAME=miner-website
+      WORDPRESS_DB_NAME=wordpress
+      WORDPRESS_DB_USER=wordpress
+
+runcmd:
+  - systemctl enable nginx
+  - systemctl enable mysql
+  - systemctl enable php8.1-fpm
+  - /opt/miner-website-deploy.sh > /var/log/deployment.log 2>&1
+
+final_message: "Miner Website deployment completed. Check /var/log/deployment.log for details."

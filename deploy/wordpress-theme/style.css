@@ -1,0 +1,44 @@
+/*
+Theme Name: Miner Website
+Description: Custom theme for miner website with static file integration
+Version: 1.0
+Author: Miner Website Team
+*/
+
+/* Import the original styles */
+@import url('../../../index.css');
+@import url('../../../style.css');
+
+/* WordPress specific overrides */
+.wp-admin-bar {
+    display: none !important;
+}
+
+body.admin-bar {
+    margin-top: 0 !important;
+}
+
+/* Ensure compatibility with WordPress */
+.site-header,
+.site-footer,
+.site-content {
+    width: 100%;
+}
+
+/* WordPress content integration */
+.wordpress-content {
+    padding: 20px;
+    background: var(--dl-color-theme-neutral-light);
+}
+
+.wordpress-content h1,
+.wordpress-content h2,
+.wordpress-content h3 {
+    color: var(--dl-color-theme-neutral-dark);
+    margin-bottom: 1rem;
+}
+
+.wordpress-content p {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
